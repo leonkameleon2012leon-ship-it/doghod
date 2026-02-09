@@ -84,7 +84,7 @@ All asset paths are defined in `lib/core/constants/asset_paths.dart`:
 
 If an asset fails to load, `AssetLoader.safeImage()` will:
 1. Show a gray placeholder icon (📷 image_not_supported)
-2. Print no error to console (silent fallback)
+2. Log error to console for debugging
 3. Continue running the app without crashing
 
 ## Benefits

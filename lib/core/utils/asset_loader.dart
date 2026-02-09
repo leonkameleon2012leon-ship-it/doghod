@@ -19,6 +19,9 @@ class AssetLoader {
       height: height,
       fit: fit,
       errorBuilder: (context, error, stackTrace) {
+        // Log error to help with debugging
+        debugPrint('Asset loading failed: $path');
+        debugPrint('Error: $error');
         return Icon(
           Icons.image_not_supported,
           size: placeholderSize,
