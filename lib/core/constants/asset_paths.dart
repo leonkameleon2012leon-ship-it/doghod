@@ -2,33 +2,32 @@
 /// Contains paths to images, animations, and sounds
 /// Falls back to icons/emoji if assets are missing
 class AssetPaths {
-  // Dog animations (Lottie JSON)
-  static const String dogIdleAnimation = 'assets/animations/dog/idle.json';
-  static const String dogHappyAnimation = 'assets/animations/dog/happy.json';
-  static const String dogSadAnimation = 'assets/animations/dog/sad.json';
-  static const String dogEatingAnimation = 'assets/animations/dog/eating.json';
-  static const String dogSleepingAnimation = 'assets/animations/dog/sleeping.json';
+  // Dog videos (MP4 videos in mrozek directory)
+  static const String dogIdleVideo = 'assets/dogs/mrozek/video/idle.mp4';
+  static const String dogHappyVideo = 'assets/dogs/mrozek/video/happy.mp4';
+  static const String dogSadVideo = 'assets/dogs/mrozek/video/sad.mp4';
+  static const String dogEatingVideo = 'assets/dogs/mrozek/video/eating.mp4';
+  static const String dogSleepingVideo = 'assets/dogs/mrozek/video/sleeping.mp4';
   
-  // Dog sprites (fallback)
-  static const String dogSpriteDefault = 'assets/images/dog/default.png';
+  // Dog images (PNG images in mrozek directory)
+  static const String dogSpriteDefault = 'assets/dogs/mrozek/images/default.png';
   
-  // Food sprites
-  static const String foodSausage = 'assets/images/food/sausage.png';
-  static const String foodChicken = 'assets/images/food/chicken.png';
-  static const String foodCarrot = 'assets/images/food/carrot.png';
-  static const String foodBone = 'assets/images/food/bone.png';
-  static const String foodFish = 'assets/images/food/fish.png';
+  // Food sprites (PNGs in food directory)
+  static const String foodSausage = 'assets/food/sausage.png';
+  static const String foodChicken = 'assets/food/chicken.png';
+  static const String foodCarrot = 'assets/food/carrot.png';
+  static const String foodBone = 'assets/food/bone.png';
+  static const String foodFish = 'assets/food/fish.png';
   
-  // UI icons (using Material Icons as fallback, so these are optional)
-  static const String iconCoin = 'assets/images/ui/coin.png';
-  static const String iconStar = 'assets/images/ui/star.png';
-  static const String iconHeart = 'assets/images/ui/heart.png';
+  // Bowl sprites (PNGs in bowls directory)
+  static const String bowlEmpty = 'assets/bowls/empty.png';
+  static const String bowlFull = 'assets/bowls/full.png';
   
-  // Sound effects (optional)
-  static const String soundTap = 'assets/sounds/tap.mp3';
-  static const String soundSuccess = 'assets/sounds/success.mp3';
-  static const String soundFail = 'assets/sounds/fail.mp3';
-  static const String soundEat = 'assets/sounds/eat.mp3';
+  // Sound effects (optional - in audio directory)
+  static const String soundTap = 'assets/audio/tap.mp3';
+  static const String soundSuccess = 'assets/audio/success.mp3';
+  static const String soundFail = 'assets/audio/fail.mp3';
+  static const String soundEat = 'assets/audio/eat.mp3';
   
   // Get food asset by type name
   static String getFoodAsset(String foodType) {
