@@ -27,22 +27,4 @@ class AssetLoader {
       },
     );
   }
-
-  /// Check if an asset exists without loading it
-  /// This is a simple try-catch wrapper for asset loading
-  static Future<bool> assetExists(String path) async {
-    try {
-      // Try to load the asset as a byte stream
-      final bundle = DefaultAssetBundle.of(
-        // We need a context, so this is a simplified check
-        // In practice, you'd call this from a widget with context
-        WidgetsBinding.instance.rootElement!,
-      );
-      await bundle.load(path);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
 }
-
