@@ -39,7 +39,7 @@ class FeedingGame extends FlameGame with TapCallbacks {
   static final List<String> _foodImages = [
     AssetPaths.foodSausage,
     AssetPaths.foodChicken,
-    AssetPaths.foodBone, // Using bone for carrot since carrot image doesn't exist
+    AssetPaths.foodBone, // Carrot image doesn't exist yet, using bone as placeholder
     AssetPaths.foodBone,
   ];
   

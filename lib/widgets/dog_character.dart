@@ -24,10 +24,9 @@ class DogCharacter extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Dog character circle with video
+          // Dog character video
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(size / 2),
               boxShadow: [
                 BoxShadow(
                   color: _getDogColor().withOpacity(0.3),
@@ -77,6 +76,8 @@ class DogCharacter extends StatelessWidget {
         return AssetPaths.dogHungryVideo;
       case DogMood.dirty:
       case DogMood.sad:
+        // Using thirsty video for sad/dirty states as a generic "unhappy" state
+        // until separate videos are available for these moods
         return AssetPaths.dogThirstyVideo;
       case DogMood.happy:
       case DogMood.content:
