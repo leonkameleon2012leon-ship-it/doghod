@@ -18,113 +18,162 @@ class HomeScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: Text(I18n.tr('appTitle')),
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
+                    Icon(Icons.monetization_on, size: 20, color: Colors.amber[700]),
+                    const SizedBox(width: 4),
                     Text(
-                      I18n.tr('language'),
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const Spacer(),
-                    DropdownButton<String>(
-                      value: controller.languageCode,
-                      onChanged: (value) {
-                        if (value != null) {
-                          controller.setLanguage(value);
-                        }
-                      },
-                      items: [
-                        DropdownMenuItem(
-                          value: 'en',
-                          child: Text(I18n.tr('english')),
-                        ),
-                        DropdownMenuItem(
-                          value: 'es',
-                          child: Text(I18n.tr('spanish')),
-                        ),
-                      ],
+                      '${controller.happiness}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.amber[700],
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
-                Center(
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 140,
-                        width: 140,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFE8C2),
-                          borderRadius: BorderRadius.circular(70),
-                        ),
-                        child: const Icon(
-                          Icons.pets,
-                          size: 80,
-                          color: Color(0xFF8D6E63),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        I18n.tr('petName'),
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        I18n.tr('welcome'),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+              ),
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.language),
+                onSelected: (value) => controller.setLanguage(value),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'en',
+                    child: Text(I18n.tr('english')),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  I18n.tr('statsTitle'),
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 12),
-                _StatCard(
-                  label: I18n.tr('hunger'),
-                  value: controller.hunger,
-                  color: const Color(0xFFE76F51),
-                ),
-                _StatCard(
-                  label: I18n.tr('happiness'),
-                  value: controller.happiness,
-                  color: const Color(0xFF2A9D8F),
-                ),
-                _StatCard(
-                  label: I18n.tr('cleanliness'),
-                  value: controller.cleanliness,
-                  color: const Color(0xFF457B9D),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => FeedingGameScreen(controller: controller),
+                  PopupMenuItem(
+                    value: 'pl',
+                    child: Text(I18n.tr('polish')),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          body: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 480),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Dog Card
+                          Card(
+                            elevation: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 120,
+                                    width: 120,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFFFE8C2),
+                                      borderRadius: BorderRadius.circular(60),
+                                    ),
+                                    child: const Icon(
+                                      Icons.pets,
+                                      size: 70,
+                                      color: Color(0xFF8D6E63),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    I18n.tr('petName'),
+                                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    I18n.tr('welcome'),
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Colors.grey[600],
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          // Stats Section
+                          _CompactStatRow(
+                            label: I18n.tr('hunger'),
+                            value: controller.hunger,
+                            color: const Color(0xFFE76F51),
+                            icon: Icons.restaurant,
+                          ),
+                          const SizedBox(height: 12),
+                          _CompactStatRow(
+                            label: I18n.tr('happiness'),
+                            value: controller.happiness,
+                            color: const Color(0xFF2A9D8F),
+                            icon: Icons.sentiment_very_satisfied,
+                          ),
+                          const SizedBox(height: 12),
+                          _CompactStatRow(
+                            label: I18n.tr('cleanliness'),
+                            value: controller.cleanliness,
+                            color: const Color(0xFF457B9D),
+                            icon: Icons.water_drop,
+                          ),
+                          const SizedBox(height: 24),
+                          // Action Buttons
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => FeedingGameScreen(controller: controller),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.restaurant),
+                                  label: Text(I18n.tr('playFeeding')),
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(vertical: 14),
+                                    backgroundColor: const Color(0xFFE76F51),
+                                    foregroundColor: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => PipesGameScreen(controller: controller),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.water_drop),
+                                  label: Text(I18n.tr('playWater')),
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(vertical: 14),
+                                    backgroundColor: const Color(0xFF457B9D),
+                                    foregroundColor: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                  child: Text(I18n.tr('playFeeding')),
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => PipesGameScreen(controller: controller),
-                      ),
-                    );
-                  },
-                  child: Text(I18n.tr('playPipes')),
-                ),
-              ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         );
@@ -133,43 +182,59 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _StatCard extends StatelessWidget {
-  const _StatCard({
+class _CompactStatRow extends StatelessWidget {
+  const _CompactStatRow({
     required this.label,
     required this.value,
     required this.color,
+    required this.icon,
   });
 
   final String label;
   final int value;
   final Color color;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(I18n.trf('statValue', {
-              'label': label,
-              'value': '$value%',
-            })),
-            const SizedBox(height: 8),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: LinearProgressIndicator(
-                value: value / 100,
-                minHeight: 12,
-                color: color,
-                backgroundColor: color.withOpacity(0.2),
+    return Row(
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 4),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: value / 100,
+                  minHeight: 10,
+                  color: color,
+                  backgroundColor: color.withOpacity(0.2),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+        const SizedBox(width: 8),
+        Text(
+          '$value%',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: color,
+          ),
+        ),
+      ],
     );
   }
 }
