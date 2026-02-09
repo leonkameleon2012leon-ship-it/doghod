@@ -56,117 +56,229 @@ class _FeedingGameScreenState extends State<FeedingGameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(I18n.tr('feedingTitle')),
-        backgroundColor: const Color(0xFFE76F51),
-        foregroundColor: Colors.white,
-      ),
-      body: Stack(
-        children: [
-          GameWidget(game: _game),
-          // Top HUD Bar with food preferences
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Container(
+        // Kitchen/table gradient background
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFFFF4E6),
+              Color(0xFFFFE5CC),
+              Color(0xFFFFF8E1),
+            ],
+          ),
+        ),
+        child: Stack(
+          children: [
+            // Game canvas
+            GameWidget(game: _game),
+            // Top HUD Bar - rounded and colorful
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
                     children: [
-                      _HUDItem(
-                        icon: Icons.star,
-                        label: I18n.trf('scoreLabel', {'score': '$_score'}),
-                        color: Colors.amber,
+                      // Score and Time
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _RoundedHUDItem(
+                              icon: Icons.star,
+                              label: '$_score',
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFFFD54F), Color(0xFFFFB300)],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _RoundedHUDItem(
+                              icon: Icons.timer,
+                              label: '${_timeLeft}s',
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFFF7043), Color(0xFFD84315)],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      _HUDItem(
-                        icon: Icons.timer,
-                        label: I18n.trf('timeLabel', {'seconds': '$_timeLeft'}),
-                        color: Colors.white,
+                      const SizedBox(height: 12),
+                      // Food preferences
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _FoodPreferenceBanner(
+                              label: I18n.tr('food${_game.preferredFood}'),
+                              icon: Icons.favorite,
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF66BB6A), Color(0xFF43A047)],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _FoodPreferenceBanner(
+                              label: I18n.tr('food${_game.dislikedFood}'),
+                              icon: Icons.close,
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFEF5350), Color(0xFFE53935)],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _FoodBanner(
-                          label: '${I18n.tr('preferred')}: ${I18n.tr('food${_game.preferredFood}')}',
-                          color: Colors.green,
-                          icon: Icons.thumb_up,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _FoodBanner(
-                          label: '${I18n.tr('disliked')}: ${I18n.tr('food${_game.dislikedFood}')}',
-                          color: Colors.red,
-                          icon: Icons.thumb_down,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-          // Game completion dialog
-          if (_completed)
-            Container(
-              color: Colors.black.withOpacity(0.5),
-              child: Center(
-                child: Card(
-                  elevation: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
+            // Back button
+            Positioned(
+              top: 0,
+              left: 0,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Material(
+                    color: Colors.white,
+                    shape: const CircleBorder(),
+                    elevation: 4,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Color(0xFFFF6B6B)),
+                      onPressed: () => Navigator.of(context).pop(),
+                      iconSize: 28,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Game completion dialog
+            if (_completed)
+              Container(
+                color: Colors.black.withOpacity(0.6),
+                child: Center(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 32),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFFFFFFFF),
+                          Color(0xFFFFF8E1),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(32),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 30,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(32),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
-                          Icons.celebration,
-                          size: 64,
-                          color: Color(0xFFE76F51),
+                        // Celebration icon
+                        Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFFFFD54F), Color(0xFFFFB300)],
+                            ),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.orange.withOpacity(0.4),
+                                blurRadius: 20,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.celebration,
+                            size: 56,
+                            color: Colors.white,
+                          ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 24),
                         Text(
                           I18n.tr('gameOver'),
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w900,
+                            color: Color(0xFFFF6B6B),
+                          ),
                           textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFFD54F), Color(0xFFFFB300)],
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            I18n.trf('scoreLabel', {'score': '$_score'}),
+                            style: const TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          I18n.trf('scoreLabel', {'score': '$_score'}),
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
                           I18n.trf('rewardHunger', {'amount': '$_reward'}),
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: const Color(0xFFE76F51),
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFFF6B6B),
+                          ),
                         ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              backgroundColor: const Color(0xFFE76F51),
-                              foregroundColor: Colors.white,
+                        const SizedBox(height: 28),
+                        // Back home button
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).pop(),
+                            borderRadius: BorderRadius.circular(24),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFFFF6B6B), Color(0xFFFF8E53)],
+                                ),
+                                borderRadius: BorderRadius.circular(24),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.red.withOpacity(0.4),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 48),
+                              child: Text(
+                                I18n.tr('backHome'),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                            child: Text(I18n.tr('backHome')),
                           ),
                         ),
                       ],
@@ -174,75 +286,104 @@ class _FeedingGameScreenState extends State<FeedingGameScreen> {
                   ),
                 ),
               ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Rounded HUD item for score/time display
+class _RoundedHUDItem extends StatelessWidget {
+  const _RoundedHUDItem({
+    required this.icon,
+    required this.label,
+    required this.gradient,
+  });
+
+  final IconData icon;
+  final String label;
+  final Gradient gradient;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: gradient,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: Colors.white, size: 28),
+          const SizedBox(width: 10),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+              shadows: [
+                Shadow(
+                  offset: Offset(1, 1),
+                  blurRadius: 2,
+                  color: Color(0x55000000),
+                ),
+              ],
             ),
+          ),
         ],
       ),
     );
   }
 }
 
-class _HUDItem extends StatelessWidget {
-  const _HUDItem({
-    required this.icon,
+// Food preference banner
+class _FoodPreferenceBanner extends StatelessWidget {
+  const _FoodPreferenceBanner({
     required this.label,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 20),
-        const SizedBox(width: 6),
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _FoodBanner extends StatelessWidget {
-  const _FoodBanner({
-    required this.label,
-    required this.color,
     required this.icon,
+    required this.gradient,
   });
 
   final String label;
-  final Color color;
   final IconData icon;
+  final Gradient gradient;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color, width: 1.5),
+        gradient: gradient,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 14),
-          const SizedBox(width: 4),
+          Icon(icon, color: Colors.white, size: 20),
+          const SizedBox(width: 6),
           Flexible(
             child: Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
-                fontSize: 11,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
               overflow: TextOverflow.ellipsis,

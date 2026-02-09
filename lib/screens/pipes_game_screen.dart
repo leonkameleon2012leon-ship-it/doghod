@@ -66,183 +66,334 @@ class _PipesGameScreenState extends State<PipesGameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(I18n.tr('pipesTitle')),
-        backgroundColor: const Color(0xFF457B9D),
-        foregroundColor: Colors.white,
-      ),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            // Calculate optimal grid size
-            final maxSize = min(constraints.maxWidth, constraints.maxHeight - 200);
-            final gridSize = min(maxSize * 0.85, 400.0);
-            final tileSize = (gridSize - 24) / _gridSize;
-
-            return Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 600),
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Instructions
-                      Text(
-                        I18n.tr('pipesHint'),
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyLarge,
+      // Underwater gradient background
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF89CFF0),
+              Color(0xFF5DADE2),
+              Color(0xFF3498DB),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Custom header
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    // Back button
+                    Material(
+                      color: Colors.white,
+                      shape: const CircleBorder(),
+                      elevation: 4,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Color(0xFF3498DB)),
+                        onPressed: () => Navigator.of(context).pop(),
+                        iconSize: 28,
                       ),
-                      const SizedBox(height: 20),
-                      // Target preview
-                      Card(
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
+                    ),
+                    const SizedBox(width: 16),
+                    // Title
+                    Expanded(
+                      child: Text(
+                        I18n.tr('pipesTitle'),
+                        style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(2, 2),
+                              blurRadius: 4,
+                              color: Color(0x55000000),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Main content
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Calculate optimal grid size - fill more of the screen
+                    final maxSize = min(constraints.maxWidth * 0.95, constraints.maxHeight * 0.7);
+                    final gridSize = min(maxSize, 500.0);
+                    final tileSize = (gridSize - 32) / _gridSize;
+
+                    return Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 600),
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(16),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                I18n.tr('target'),
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
+                              // Instructions
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.9),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
                                     ),
-                              ),
-                              const SizedBox(height: 8),
-                              SizedBox(
-                                width: 160,
-                                height: 160,
-                                child: GridView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: _gridSize,
-                                    crossAxisSpacing: 4,
-                                    mainAxisSpacing: 4,
+                                  ],
+                                ),
+                                child: Text(
+                                  I18n.tr('pipesHint'),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF2C3E50),
                                   ),
-                                  itemCount: _target.length,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Center(
-                                        child: _PipePiece(
-                                          orientation: _target[index],
-                                          size: 28,
-                                        ),
-                                      ),
-                                    );
-                                  },
                                 ),
                               ),
+                              const SizedBox(height: 20),
+                              // Target preview - bigger and more prominent
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.9),
+                                  borderRadius: BorderRadius.circular(24),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 16,
+                                      offset: const Offset(0, 6),
+                                    ),
+                                  ],
+                                ),
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.flag, color: Color(0xFF3498DB), size: 24),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          I18n.tr('target'),
+                                          style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w900,
+                                            color: Color(0xFF3498DB),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    SizedBox(
+                                      width: 180,
+                                      height: 180,
+                                      child: GridView.builder(
+                                        physics: const NeverScrollableScrollPhysics(),
+                                        gridDelegate:
+                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: _gridSize,
+                                          crossAxisSpacing: 6,
+                                          mainAxisSpacing: 6,
+                                        ),
+                                        itemCount: _target.length,
+                                        itemBuilder: (context, index) {
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFE8F4F8),
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: Center(
+                                              child: _PipePiece(
+                                                orientation: _target[index],
+                                                size: 32,
+                                                isTarget: true,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              // Main game grid - bigger and more colorful
+                              Center(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  padding: const EdgeInsets.all(16),
+                                  child: SizedBox(
+                                    width: gridSize,
+                                    height: gridSize,
+                                    child: GridView.builder(
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: _gridSize,
+                                        crossAxisSpacing: 12,
+                                        mainAxisSpacing: 12,
+                                      ),
+                                      itemCount: _gridSize * _gridSize,
+                                      itemBuilder: (context, index) {
+                                        final isCorrect = _current[index] == _target[index];
+                                        return GestureDetector(
+                                          onTap: () => _rotatePipe(index),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                colors: isCorrect
+                                                    ? [const Color(0xFF66BB6A), const Color(0xFF43A047)]
+                                                    : [Colors.white, const Color(0xFFF5F5F5)],
+                                              ),
+                                              borderRadius: BorderRadius.circular(16),
+                                              border: Border.all(
+                                                color: isCorrect
+                                                    ? const Color(0xFF2E7D32)
+                                                    : const Color(0xFFB0BEC5),
+                                                width: 3,
+                                              ),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black.withOpacity(0.15),
+                                                  blurRadius: 8,
+                                                  offset: const Offset(0, 4),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Center(
+                                              child: _PipePiece(
+                                                orientation: _current[index],
+                                                size: tileSize * 0.65,
+                                                isTarget: false,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (_completed) ...[
+                                const SizedBox(height: 24),
+                                // Success card
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [Color(0xFFFFFFFF), Color(0xFFE8F5E9)],
+                                    ),
+                                    borderRadius: BorderRadius.circular(28),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 8),
+                                      ),
+                                    ],
+                                  ),
+                                  padding: const EdgeInsets.all(28),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: 80,
+                                        height: 80,
+                                        decoration: BoxDecoration(
+                                          gradient: const LinearGradient(
+                                            colors: [Color(0xFF66BB6A), Color(0xFF43A047)],
+                                          ),
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.green.withOpacity(0.4),
+                                              blurRadius: 16,
+                                              offset: const Offset(0, 6),
+                                            ),
+                                          ],
+                                        ),
+                                        child: const Icon(
+                                          Icons.check_circle,
+                                          size: 48,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        I18n.tr('gameOver'),
+                                        style: const TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w900,
+                                          color: Color(0xFF2E7D32),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        I18n.trf('rewardClean', {'amount': '$_reward'}),
+                                        style: const TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF43A047),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          onTap: () => Navigator.of(context).pop(),
+                                          borderRadius: BorderRadius.circular(24),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              gradient: const LinearGradient(
+                                                colors: [Color(0xFF5DADE2), Color(0xFF3498DB)],
+                                              ),
+                                              borderRadius: BorderRadius.circular(24),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.blue.withOpacity(0.4),
+                                                  blurRadius: 12,
+                                                  offset: const Offset(0, 6),
+                                                ),
+                                              ],
+                                            ),
+                                            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 48),
+                                            child: Text(
+                                              I18n.tr('backHome'),
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      // Main game grid
-                      Center(
-                        child: SizedBox(
-                          width: gridSize,
-                          height: gridSize,
-                          child: GridView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: _gridSize,
-                              crossAxisSpacing: 8,
-                              mainAxisSpacing: 8,
-                            ),
-                            itemCount: _gridSize * _gridSize,
-                            itemBuilder: (context, index) {
-                              final isCorrect = _current[index] == _target[index];
-                              return GestureDetector(
-                                onTap: () => _rotatePipe(index),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: isCorrect
-                                        ? Colors.green[50]
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: isCorrect
-                                          ? Colors.green
-                                          : const Color(0xFFCED4DA),
-                                      width: 2,
-                                    ),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color(0x11000000),
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Center(
-                                    child: _PipePiece(
-                                      orientation: _current[index],
-                                      size: tileSize * 0.7,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      if (_completed) ...[
-                        const SizedBox(height: 24),
-                        Card(
-                          color: Colors.green[50],
-                          elevation: 4,
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              children: [
-                                const Icon(
-                                  Icons.check_circle,
-                                  size: 64,
-                                  color: Colors.green,
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  I18n.tr('gameOver'),
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  I18n.trf('rewardClean', {'amount': '$_reward'}),
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        color: Colors.green[700],
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                                const SizedBox(height: 16),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: ElevatedButton(
-                                    onPressed: () => Navigator.of(context).pop(),
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(vertical: 14),
-                                      backgroundColor: const Color(0xFF457B9D),
-                                      foregroundColor: Colors.white,
-                                    ),
-                                    child: Text(I18n.tr('backHome')),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                    );
+                  },
                 ),
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );
@@ -253,10 +404,12 @@ class _PipePiece extends StatelessWidget {
   const _PipePiece({
     required this.orientation,
     required this.size,
+    required this.isTarget,
   });
 
   final int orientation;
   final double size;
+  final bool isTarget;
 
   @override
   Widget build(BuildContext context) {
@@ -264,28 +417,49 @@ class _PipePiece extends StatelessWidget {
       angle: orientation * pi / 2,
       child: CustomPaint(
         size: Size(size, size),
-        painter: _PipePainter(),
+        painter: _PipePainter(isTarget: isTarget),
       ),
     );
   }
 }
 
 class _PipePainter extends CustomPainter {
+  _PipePainter({required this.isTarget});
+  
+  final bool isTarget;
+
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFF4EA8DE)
-      ..style = PaintingStyle.fill;
-
-    final strokePaint = Paint()
-      ..color = const Color(0xFF1E6F9F)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    final pipeWidth = size.width * 0.35;
+    // Thicker pipes with gradient for depth
+    final pipeWidth = size.width * 0.45;
     final center = size.width / 2;
 
-    // Vertical pipe segment
+    // Pipe colors - bright aqua/teal for game, muted for target
+    final Color lightColor = isTarget 
+        ? const Color(0xFF80DEEA) 
+        : const Color(0xFF4DD0E1);
+    final Color darkColor = isTarget 
+        ? const Color(0xFF26C6DA) 
+        : const Color(0xFF00ACC1);
+
+    // Shadow/depth effect
+    final shadowPaint = Paint()
+      ..color = Colors.black.withOpacity(0.15)
+      ..style = PaintingStyle.fill;
+
+    // Vertical pipe segment with shadow
+    final verticalShadow = RRect.fromRectAndRadius(
+      Rect.fromLTWH(
+        center - pipeWidth / 2 + 2,
+        2,
+        pipeWidth,
+        center + pipeWidth / 2,
+      ),
+      Radius.circular(pipeWidth / 3),
+    );
+    canvas.drawRRect(verticalShadow, shadowPaint);
+
+    // Vertical pipe segment with gradient
     final verticalRect = RRect.fromRectAndRadius(
       Rect.fromLTWH(
         center - pipeWidth / 2,
@@ -293,12 +467,37 @@ class _PipePainter extends CustomPainter {
         pipeWidth,
         center + pipeWidth / 2,
       ),
-      Radius.circular(pipeWidth / 4),
+      Radius.circular(pipeWidth / 3),
     );
-    canvas.drawRRect(verticalRect, paint);
+    
+    final verticalGradient = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: [lightColor, darkColor],
+      ).createShader(verticalRect.outerRect);
+    canvas.drawRRect(verticalRect, verticalGradient);
+
+    // Stroke outline for vertical
+    final strokePaint = Paint()
+      ..color = const Color(0xFF006064)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = isTarget ? 2.0 : 3.0;
     canvas.drawRRect(verticalRect, strokePaint);
 
-    // Horizontal pipe segment
+    // Horizontal pipe segment with shadow
+    final horizontalShadow = RRect.fromRectAndRadius(
+      Rect.fromLTWH(
+        center - pipeWidth / 2 + 2,
+        center - pipeWidth / 2 + 2,
+        center + pipeWidth / 2,
+        pipeWidth,
+      ),
+      Radius.circular(pipeWidth / 3),
+    );
+    canvas.drawRRect(horizontalShadow, shadowPaint);
+
+    // Horizontal pipe segment with gradient
     final horizontalRect = RRect.fromRectAndRadius(
       Rect.fromLTWH(
         center - pipeWidth / 2,
@@ -306,10 +505,49 @@ class _PipePainter extends CustomPainter {
         center + pipeWidth / 2,
         pipeWidth,
       ),
+      Radius.circular(pipeWidth / 3),
+    );
+    
+    final horizontalGradient = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [lightColor, darkColor],
+      ).createShader(horizontalRect.outerRect);
+    canvas.drawRRect(horizontalRect, horizontalGradient);
+
+    // Stroke outline for horizontal
+    canvas.drawRRect(horizontalRect, strokePaint);
+
+    // Add highlight for depth effect
+    final highlightPaint = Paint()
+      ..color = Colors.white.withOpacity(0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = pipeWidth * 0.12;
+
+    // Vertical highlight
+    final verticalHighlight = RRect.fromRectAndRadius(
+      Rect.fromLTWH(
+        center - pipeWidth / 2 + pipeWidth * 0.15,
+        pipeWidth * 0.15,
+        pipeWidth * 0.3,
+        center + pipeWidth / 2 - pipeWidth * 0.3,
+      ),
       Radius.circular(pipeWidth / 4),
     );
-    canvas.drawRRect(horizontalRect, paint);
-    canvas.drawRRect(horizontalRect, strokePaint);
+    canvas.drawRRect(verticalHighlight, highlightPaint);
+
+    // Horizontal highlight
+    final horizontalHighlight = RRect.fromRectAndRadius(
+      Rect.fromLTWH(
+        center - pipeWidth / 2 + pipeWidth * 0.15,
+        center - pipeWidth / 2 + pipeWidth * 0.15,
+        center + pipeWidth / 2 - pipeWidth * 0.45,
+        pipeWidth * 0.3,
+      ),
+      Radius.circular(pipeWidth / 4),
+    );
+    canvas.drawRRect(horizontalHighlight, highlightPaint);
   }
 
   @override
