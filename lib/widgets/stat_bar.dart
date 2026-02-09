@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/constants/visual_constants.dart';
+import '../core/constants/asset_paths.dart';
 
 /// Thick, rounded stat bar widget for displaying hunger, happiness, cleanliness
 class StatBar extends StatelessWidget {
@@ -37,27 +38,8 @@ class StatBar extends StatelessWidget {
       padding: const EdgeInsets.all(GameSizes.spacingMedium),
       child: Row(
         children: [
-          // Icon with gradient background
-          Container(
-            width: GameSizes.statBarIconSize,
-            height: GameSizes.statBarIconSize,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [startColor, endColor],
-              ),
-              borderRadius: BorderRadius.circular(GameSizes.borderRadiusSmall),
-              boxShadow: [
-                BoxShadow(
-                  color: startColor.withOpacity(0.4),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Icon(icon, color: Colors.white, size: 32),
-          ),
+          // Icon with gradient background or image
+          _buildIconWidget(),
           const SizedBox(width: GameSizes.spacingMedium),
           // Progress bar and label
           Expanded(
@@ -134,6 +116,59 @@ class StatBar extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildIconWidget() {
+    final percentage = value.clamp(0.0, 100.0);
+    String? imagePath;
+    
+    // Use bowl images for hunger and cleanliness (water)
+    if (icon == Icons.restaurant) {
+      // Hunger stat - food bowl
+      imagePath = percentage > 50 
+          ? AssetPaths.bowlFoodFull 
+          : AssetPaths.bowlFoodEmpty;
+    } else if (icon == Icons.water_drop) {
+      // Cleanliness stat - water bowl
+      imagePath = percentage > 50 
+          ? AssetPaths.bowlWaterFull 
+          : AssetPaths.bowlWaterEmpty;
+    }
+    
+    return Container(
+      width: GameSizes.statBarIconSize,
+      height: GameSizes.statBarIconSize,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [startColor, endColor],
+        ),
+        borderRadius: BorderRadius.circular(GameSizes.borderRadiusSmall),
+        boxShadow: [
+          BoxShadow(
+            color: startColor.withOpacity(0.4),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: imagePath != null
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(GameSizes.borderRadiusSmall),
+              child: Image.asset(
+                imagePath,
+                width: GameSizes.statBarIconSize,
+                height: GameSizes.statBarIconSize,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  // Fallback to icon if image fails to load
+                  return Icon(icon, color: Colors.white, size: 32);
+                },
+              ),
+            )
+          : Icon(icon, color: Colors.white, size: 32),
     );
   }
 }
