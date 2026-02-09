@@ -1,14 +1,15 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
-import '../doghog_controller.dart';
+import '../core/managers/game_manager.dart';
+import '../models/minigame_result.dart';
 import '../games/feeding_game.dart';
 import '../i18n.dart';
 
 class FeedingGameScreen extends StatefulWidget {
-  const FeedingGameScreen({super.key, required this.controller});
+  const FeedingGameScreen({super.key, required this.gameManager});
 
-  final DogHogController controller;
+  final GameManager gameManager;
 
   @override
   State<FeedingGameScreen> createState() => _FeedingGameScreenState();
@@ -17,14 +18,19 @@ class FeedingGameScreen extends StatefulWidget {
 class _FeedingGameScreenState extends State<FeedingGameScreen> {
   late FeedingGame _game;
   int _score = 0;
-  int _timeLeft = 20;
+  int _timeLeft = 30;
   bool _completed = false;
   bool _rewarded = false;
-  int _reward = 0;
+  final _startTime = DateTime.now();
 
   @override
   void initState() {
     super.initState();
+    
+    // Ensure daily foods are set
+    widget.gameManager.randomizeDailyFoods();
+    final gameState = widget.gameManager.gameState;
+    
     _game = FeedingGame(
       onScore: (score) {
         setState(() {
@@ -40,16 +46,26 @@ class _FeedingGameScreenState extends State<FeedingGameScreen> {
         if (_completed) {
           return;
         }
-        final reward = (score * 2).clamp(2, 40).toInt();
+        
         setState(() {
           _completed = true;
-          _reward = reward;
         });
+        
         if (!_rewarded) {
-          widget.controller.feed(reward);
+          // Create minigame result
+          final timePlayed = DateTime.now().difference(_startTime);
+          final result = MinigameResult.feedingFrenzy(
+            score: score,
+            timePlayed: timePlayed,
+          );
+          
+          // Apply rewards through game manager
+          widget.gameManager.applyMinigameResult(result);
           _rewarded = true;
         }
       },
+      preferredFood: gameState.preferredFood,
+      dislikedFood: gameState.dislikedFood,
     );
   }
 
@@ -241,7 +257,7 @@ class _FeedingGameScreenState extends State<FeedingGameScreen> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          I18n.trf('rewardHunger', {'amount': '$_reward'}),
+                          'Hunger +${(_score * 2).clamp(5, 40).toInt()}',
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,

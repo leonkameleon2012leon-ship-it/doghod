@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 
-import 'doghog_controller.dart';
+import 'core/managers/game_manager.dart';
+import 'core/services/storage_service.dart';
 import 'i18n.dart';
 import 'screens/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final controller = DogHogController();
-  await controller.load();
-  runApp(DogHogApp(controller: controller));
+  
+  // Initialize services
+  final storageService = StorageService();
+  await storageService.init();
+  
+  // Initialize game manager
+  final gameManager = GameManager(storageService);
+  await gameManager.init();
+  
+  runApp(DogHogApp(gameManager: gameManager));
 }
 
 class DogHogApp extends StatefulWidget {
-  const DogHogApp({super.key, required this.controller});
+  const DogHogApp({super.key, required this.gameManager});
 
-  final DogHogController controller;
+  final GameManager gameManager;
 
   @override
   State<DogHogApp> createState() => _DogHogAppState();
@@ -35,14 +43,17 @@ class _DogHogAppState extends State<DogHogApp> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    widget.controller.handleLifecycle(state);
+    widget.gameManager.handleLifecycle(state);
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: widget.controller,
+      animation: widget.gameManager,
       builder: (context, _) {
+        // Set language from game state
+        I18n.setLanguage(widget.gameManager.gameState.languageCode);
+        
         return MaterialApp(
           title: I18n.tr('appTitle'),
           theme: ThemeData(
@@ -82,7 +93,7 @@ class _DogHogAppState extends State<DogHogApp> with WidgetsBindingObserver {
               ),
             ),
           ),
-          home: HomeScreen(controller: widget.controller),
+          home: HomeScreen(gameManager: widget.gameManager),
         );
       },
     );

@@ -1,22 +1,25 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 
-class FeedingGame extends FlameGame with TapDetector {
+class FeedingGame extends FlameGame with TapCallbacks {
   FeedingGame({
     required this.onScore,
     required this.onTimeChanged,
     required this.onGameOver,
-  });
+    String? preferredFood,
+    String? dislikedFood,
+  })  : preferredFood = preferredFood ?? 'Sausage',
+        dislikedFood = dislikedFood ?? 'Carrot';
 
   final void Function(int score) onScore;
   final void Function(int secondsLeft) onTimeChanged;
   final void Function(int score) onGameOver;
 
-  static const double _durationSeconds = 20;
+  static const double _durationSeconds = 30;
   final Random _random = Random();
   double _elapsed = 0;
   double _spawnTimer = 0;
@@ -32,17 +35,14 @@ class FeedingGame extends FlameGame with TapDetector {
     Color(0xFFFFFFFF), // Bone - white
   ];
   
-  late String preferredFood;
-  late String dislikedFood;
+  // Initialize with safe defaults to prevent crashes
+  final String preferredFood;
+  final String dislikedFood;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    // Pick random preferred and disliked foods
-    preferredFood = _foodTypes[_random.nextInt(_foodTypes.length)];
-    do {
-      dislikedFood = _foodTypes[_random.nextInt(_foodTypes.length)];
-    } while (dislikedFood == preferredFood);
+    // Preferred and disliked foods are now set via constructor
   }
 
   @override
@@ -73,8 +73,8 @@ class FeedingGame extends FlameGame with TapDetector {
   }
 
   @override
-  void onTapDown(TapDownInfo info) {
-    final tapPosition = info.eventPosition.game;
+  void onTapDown(TapDownEvent event) {
+    final tapPosition = event.localPosition;
     final snacks = children.whereType<_SnackComponent>().toList();
     for (final snack in snacks) {
       if (snack.containsPoint(tapPosition)) {
