@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/dog_model.dart';
 import '../core/constants/visual_constants.dart';
+import '../core/constants/asset_paths.dart';
+import 'dog_video_widget.dart';
 
 /// Dog character widget with animated display based on mood
 class DogCharacter extends StatelessWidget {
@@ -22,13 +24,9 @@ class DogCharacter extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Dog character circle
+          // Dog character video
           Container(
-            height: size,
-            width: size,
             decoration: BoxDecoration(
-              gradient: _getDogGradient(),
-              borderRadius: BorderRadius.circular(size / 2),
               boxShadow: [
                 BoxShadow(
                   color: _getDogColor().withOpacity(0.3),
@@ -37,12 +35,9 @@ class DogCharacter extends StatelessWidget {
                 ),
               ],
             ),
-            child: Center(
-              child: Icon(
-                _getDogIcon(),
-                size: size * 0.56,
-                color: _getDogIconColor(),
-              ),
+            child: DogVideoWidget(
+              videoPath: _getVideoPath(),
+              size: size,
             ),
           ),
           const SizedBox(height: 12),
@@ -73,41 +68,21 @@ class DogCharacter extends StatelessWidget {
     );
   }
 
-  /// Get gradient based on dog mood
-  LinearGradient _getDogGradient() {
+  /// Get video path based on dog mood
+  String _getVideoPath() {
     switch (dog.mood) {
-      case DogMood.happy:
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFFD8A8), Color(0xFFFFB88C)],
-        );
-      case DogMood.content:
-        return GameColors.dogGradient;
       case DogMood.hungry:
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFFB3B3), Color(0xFFFF8585)],
-        );
-      case DogMood.sad:
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFB3B3FF), Color(0xFF8585FF)],
-        );
-      case DogMood.dirty:
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFA89070), Color(0xFF8A7256)],
-        );
       case DogMood.critical:
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFF6B6B), Color(0xFFFF4757)],
-        );
+        return AssetPaths.dogHungryVideo;
+      case DogMood.dirty:
+      case DogMood.sad:
+        // Using thirsty video for sad/dirty states as a generic "unhappy" state
+        // until separate videos are available for these moods
+        return AssetPaths.dogThirstyVideo;
+      case DogMood.happy:
+      case DogMood.content:
+      default:
+        return AssetPaths.dogIdleVideo;
     }
   }
 
@@ -127,28 +102,5 @@ class DogCharacter extends StatelessWidget {
       case DogMood.critical:
         return Colors.deepOrange;
     }
-  }
-
-  /// Get icon based on mood
-  IconData _getDogIcon() {
-    switch (dog.mood) {
-      case DogMood.happy:
-        return Icons.pets;
-      case DogMood.content:
-        return Icons.pets;
-      case DogMood.hungry:
-        return Icons.pets;
-      case DogMood.sad:
-        return Icons.pets;
-      case DogMood.dirty:
-        return Icons.pets;
-      case DogMood.critical:
-        return Icons.pets;
-    }
-  }
-
-  /// Get icon color based on mood
-  Color _getDogIconColor() {
-    return const Color(0xFF8D6E63);
   }
 }

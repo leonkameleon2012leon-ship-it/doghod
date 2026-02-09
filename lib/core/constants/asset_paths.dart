@@ -4,24 +4,25 @@
 class AssetPaths {
   // Dog videos (MP4 videos in mrozek directory)
   static const String dogIdleVideo = 'assets/dogs/mrozek/video/idle.mp4';
-  static const String dogHappyVideo = 'assets/dogs/mrozek/video/happy.mp4';
-  static const String dogSadVideo = 'assets/dogs/mrozek/video/sad.mp4';
-  static const String dogEatingVideo = 'assets/dogs/mrozek/video/eating.mp4';
-  static const String dogSleepingVideo = 'assets/dogs/mrozek/video/sleeping.mp4';
+  static const String dogHungryVideo = 'assets/dogs/mrozek/video/hungry.mp4';
+  static const String dogThirstyVideo = 'assets/dogs/mrozek/video/thirsty.mp4';
   
   // Dog images (PNG images in mrozek directory)
   static const String dogSpriteDefault = 'assets/dogs/mrozek/images/default.png';
   
   // Food sprites (PNGs in food directory)
-  static const String foodSausage = 'assets/food/sausage.png';
-  static const String foodChicken = 'assets/food/chicken.png';
-  static const String foodCarrot = 'assets/food/carrot.png';
-  static const String foodBone = 'assets/food/bone.png';
-  static const String foodFish = 'assets/food/fish.png';
+  static const String foodSausage = 'assets/food/food_sausage.png';
+  static const String foodChicken = 'assets/food/food_chicken.png';
+  static const String foodCarrot = 'assets/food/food_carrot.png';
+  static const String foodBone = 'assets/food/food_bone.png';
+  static const String foodFish = 'assets/food/food_fish.png';
+  static const String foodChocolate = 'assets/food/food_bad_chocolate.png';
   
   // Bowl sprites (PNGs in bowls directory)
-  static const String bowlEmpty = 'assets/bowls/empty.png';
-  static const String bowlFull = 'assets/bowls/full.png';
+  static const String bowlFoodEmpty = 'assets/bowls/bowl_food_empty.png';
+  static const String bowlFoodFull = 'assets/bowls/bowl_food_full.png';
+  static const String bowlWaterEmpty = 'assets/bowls/bowl_water_empty.png';
+  static const String bowlWaterFull = 'assets/bowls/bowl_water_full.png';
   
   // Sound effects (optional - in audio directory)
   static const String soundTap = 'assets/audio/tap.mp3';
