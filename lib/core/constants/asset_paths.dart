@@ -51,6 +51,7 @@ class AssetPaths {
   /// Convert full asset path to Flame-compatible path (without 'assets/' prefix)
   /// Flame's image loader automatically prepends 'assets/images/' to paths
   static String toFlameAsset(String fullPath) {
-    return fullPath.startsWith('assets/') ? fullPath.substring(7) : fullPath;
+    const prefix = 'assets/';
+    return fullPath.startsWith(prefix) ? fullPath.substring(prefix.length) : fullPath;
   }
 }
