@@ -1,11 +1,11 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 
-class FeedingGame extends FlameGame with TapDetector {
+class FeedingGame extends FlameGame with TapCallbacks {
   FeedingGame({
     required this.onScore,
     required this.onTimeChanged,
@@ -32,8 +32,9 @@ class FeedingGame extends FlameGame with TapDetector {
     Color(0xFFFFFFFF), // Bone - white
   ];
   
-  late String preferredFood;
-  late String dislikedFood;
+  // Initialize with safe defaults to prevent crashes
+  String preferredFood = 'Sausage';
+  String dislikedFood = 'Carrot';
 
   @override
   Future<void> onLoad() async {
@@ -73,8 +74,8 @@ class FeedingGame extends FlameGame with TapDetector {
   }
 
   @override
-  void onTapDown(TapDownInfo info) {
-    final tapPosition = info.eventPosition.game;
+  void onTapDown(TapDownEvent event) {
+    final tapPosition = event.localPosition;
     final snacks = children.whereType<_SnackComponent>().toList();
     for (final snack in snacks) {
       if (snack.containsPoint(tapPosition)) {
