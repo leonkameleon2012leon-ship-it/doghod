@@ -50,12 +50,13 @@ class FeedingGame extends FlameGame with TapCallbacks {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    // Preload food images
+    // Preload food images - remove 'assets/' prefix for Flame
+    // Flame's images.loadAll() automatically prepends 'assets/images/'
     await images.loadAll([
-      AssetPaths.foodSausage,
-      AssetPaths.foodChicken,
-      AssetPaths.foodBone,
-      AssetPaths.foodChocolate,
+      AssetPaths.toFlameAsset(AssetPaths.foodSausage),
+      AssetPaths.toFlameAsset(AssetPaths.foodChicken),
+      AssetPaths.toFlameAsset(AssetPaths.foodBone),
+      AssetPaths.toFlameAsset(AssetPaths.foodChocolate),
     ]);
   }
 
@@ -164,7 +165,10 @@ class _SnackComponent extends CircleComponent with HasGameRef<FeedingGame> {
     
     // Try to load and display the image
     try {
-      final image = gameRef.images.fromCache(imagePath);
+      // Remove 'assets/' prefix for Flame's image cache
+      // Flame stores images without the 'assets/' prefix
+      final cacheKey = imagePath.replaceFirst('assets/', '');
+      final image = gameRef.images.fromCache(cacheKey);
       _imageSprite = SpriteComponent(
         sprite: Sprite(image),
         size: Vector2.all(radius * 1.8),

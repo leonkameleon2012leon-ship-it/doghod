@@ -47,4 +47,10 @@ class AssetPaths {
         return foodSausage;
     }
   }
+  
+  /// Convert full asset path to Flame-compatible path (without 'assets/' prefix)
+  /// Flame's image loader automatically prepends 'assets/images/' to paths
+  static String toFlameAsset(String fullPath) {
+    return fullPath.replaceFirst('assets/', '');
+  }
 }
