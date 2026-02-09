@@ -167,7 +167,7 @@ class _SnackComponent extends CircleComponent with HasGameRef<FeedingGame> {
     try {
       // Remove 'assets/' prefix for Flame's image cache
       // Flame stores images without the 'assets/' prefix
-      final cacheKey = imagePath.replaceFirst('assets/', '');
+      final cacheKey = AssetPaths.toFlameAsset(imagePath);
       final image = gameRef.images.fromCache(cacheKey);
       _imageSprite = SpriteComponent(
         sprite: Sprite(image),
