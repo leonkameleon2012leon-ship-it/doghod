@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: ">=3.1.0 <4.0.0"
+  sdk: ">=3.0.6 <4.0.0"
 
 dependencies:
   flutter:
@@ -15,8 +15,13 @@ dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/dog/
-    - assets/images/food/
-    - assets/images/ui/
-    - assets/animations/dog/
-    - assets/sounds/
+    - assets/
+    - assets/food/
+    - assets/bowls/
+    - assets/dogs/
+    - assets/dogs/mrozek/
+    - assets/dogs/mrozek/video/
+    - assets/dogs/mrozek/images/
+    - assets/pipes/
+    - assets/backgrounds/
+    - assets/audio/
