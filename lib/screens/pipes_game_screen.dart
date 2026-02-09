@@ -2,13 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import '../doghog_controller.dart';
+import '../core/managers/game_manager.dart';
+import '../models/minigame_result.dart';
 import '../i18n.dart';
 
 class PipesGameScreen extends StatefulWidget {
-  const PipesGameScreen({super.key, required this.controller});
+  const PipesGameScreen({super.key, required this.gameManager});
 
-  final DogHogController controller;
+  final GameManager gameManager;
 
   @override
   State<PipesGameScreen> createState() => _PipesGameScreenState();
@@ -16,11 +17,13 @@ class PipesGameScreen extends StatefulWidget {
 
 class _PipesGameScreenState extends State<PipesGameScreen> {
   static const int _gridSize = 4;
+  static const int _parMoves = 16;
   final Random _random = Random();
   late List<int> _current;
   late List<int> _target;
   bool _completed = false;
-  int _reward = 0;
+  int _moves = 0;
+  final _startTime = DateTime.now();
 
   @override
   void initState() {
@@ -44,13 +47,23 @@ class _PipesGameScreenState extends State<PipesGameScreen> {
     }
     setState(() {
       _current[index] = (_current[index] + 1) % 4;
+      _moves++;
     });
     if (_isComplete()) {
       setState(() {
         _completed = true;
-        _reward = 15;
       });
-      widget.controller.fixPipes(_reward);
+      
+      // Create minigame result
+      final timePlayed = DateTime.now().difference(_startTime);
+      final result = MinigameResult.pipeFix(
+        moves: _moves,
+        parMoves: _parMoves,
+        timePlayed: timePlayed,
+      );
+      
+      // Apply rewards through game manager
+      widget.gameManager.applyMinigameResult(result);
     }
   }
 
@@ -341,7 +354,7 @@ class _PipesGameScreenState extends State<PipesGameScreen> {
                                       ),
                                       const SizedBox(height: 12),
                                       Text(
-                                        I18n.trf('rewardClean', {'amount': '$_reward'}),
+                                        'Cleanliness +${15 + (_moves <= _parMoves ? 15 : _moves <= _parMoves + 5 ? 10 : 5)}',
                                         style: const TextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,

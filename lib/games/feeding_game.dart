@@ -10,13 +10,16 @@ class FeedingGame extends FlameGame with TapCallbacks {
     required this.onScore,
     required this.onTimeChanged,
     required this.onGameOver,
-  });
+    String? preferredFood,
+    String? dislikedFood,
+  })  : preferredFood = preferredFood ?? 'Sausage',
+        dislikedFood = dislikedFood ?? 'Carrot';
 
   final void Function(int score) onScore;
   final void Function(int secondsLeft) onTimeChanged;
   final void Function(int score) onGameOver;
 
-  static const double _durationSeconds = 20;
+  static const double _durationSeconds = 30;
   final Random _random = Random();
   double _elapsed = 0;
   double _spawnTimer = 0;
@@ -33,17 +36,13 @@ class FeedingGame extends FlameGame with TapCallbacks {
   ];
   
   // Initialize with safe defaults to prevent crashes
-  String preferredFood = 'Sausage';
-  String dislikedFood = 'Carrot';
+  final String preferredFood;
+  final String dislikedFood;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    // Pick random preferred and disliked foods
-    preferredFood = _foodTypes[_random.nextInt(_foodTypes.length)];
-    do {
-      dislikedFood = _foodTypes[_random.nextInt(_foodTypes.length)];
-    } while (dislikedFood == preferredFood);
+    // Preferred and disliked foods are now set via constructor
   }
 
   @override
