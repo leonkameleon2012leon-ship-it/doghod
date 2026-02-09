@@ -47,4 +47,11 @@ class AssetPaths {
         return foodSausage;
     }
   }
+  
+  /// Convert full asset path to Flame-compatible path (without 'assets/' prefix)
+  /// Flame's image loader automatically prepends 'assets/images/' to paths
+  static String toFlameAsset(String fullPath) {
+    const prefix = 'assets/';
+    return fullPath.startsWith(prefix) ? fullPath.substring(prefix.length) : fullPath;
+  }
 }
