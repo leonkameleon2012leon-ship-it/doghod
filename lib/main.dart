@@ -46,8 +46,41 @@ class _DogHogAppState extends State<DogHogApp> with WidgetsBindingObserver {
         return MaterialApp(
           title: I18n.tr('appTitle'),
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2A9D8F)),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF2A9D8F),
+              brightness: Brightness.light,
+            ),
             useMaterial3: true,
+            scaffoldBackgroundColor: const Color(0xFFF0F7FF),
+            cardTheme: CardTheme(
+              elevation: 8,
+              shadowColor: Colors.black.withOpacity(0.2),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                elevation: 6,
+                shadowColor: Colors.black.withOpacity(0.3),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                textStyle: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            appBarTheme: const AppBarTheme(
+              elevation: 0,
+              centerTitle: true,
+              titleTextStyle: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           home: HomeScreen(controller: widget.controller),
         );

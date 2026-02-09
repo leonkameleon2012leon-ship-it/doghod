@@ -46,7 +46,7 @@ class FeedingGame extends FlameGame with TapDetector {
   }
 
   @override
-  Color backgroundColor() => const Color(0xFFF5F5DC);
+  Color backgroundColor() => const Color(0xFFFFF8E1);
 
   @override
   void update(double dt) {
@@ -89,9 +89,9 @@ class FeedingGame extends FlameGame with TapDetector {
   }
 
   void _spawnSnack() {
-    // Scale snack size based on screen size
-    final baseRadius = size.x > 600 ? 28.0 : 22.0;
-    final radius = baseRadius + _random.nextDouble() * 8;
+    // Much larger snacks for mobile game feel
+    final baseRadius = size.x > 600 ? 40.0 : 32.0;
+    final radius = baseRadius + _random.nextDouble() * 10;
     
     final x = _random.nextDouble() * (size.x - radius * 2) + radius;
     final speed = 100 + _random.nextDouble() * 140;
@@ -116,7 +116,8 @@ class _SnackComponent extends CircleComponent with HasGameRef<FeedingGame> {
     required double radius,
     required this.foodType,
     required Color color,
-  }) : super(
+  }) : _baseColor = color,
+        super(
           position: position,
           radius: radius,
           anchor: Anchor.center,
@@ -125,30 +126,67 @@ class _SnackComponent extends CircleComponent with HasGameRef<FeedingGame> {
 
   final double speed;
   final String foodType;
+  final Color _baseColor;
   late TextComponent _label;
+  late CircleComponent _shadow;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     
-    // Add food label
+    // Add shadow underneath
+    _shadow = CircleComponent(
+      radius: radius * 0.9,
+      paint: Paint()..color = Colors.black.withOpacity(0.2),
+      position: Vector2(0, radius * 0.15),
+      anchor: Anchor.center,
+    );
+    add(_shadow);
+    
+    // Create gradient effect with multiple layers
+    final highlightCircle = CircleComponent(
+      radius: radius * 0.4,
+      paint: Paint()..color = Colors.white.withOpacity(0.3),
+      position: Vector2(-radius * 0.2, -radius * 0.2),
+      anchor: Anchor.center,
+    );
+    add(highlightCircle);
+    
+    // Add food label with better styling
     _label = TextComponent(
       text: foodType,
       textRenderer: TextPaint(
         style: TextStyle(
-          color: Colors.black87,
-          fontSize: radius * 0.4,
-          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          fontSize: radius * 0.35,
+          fontWeight: FontWeight.w900,
+          shadows: [
+            const Shadow(
+              offset: Offset(1, 1),
+              blurRadius: 2,
+              color: Color(0x88000000),
+            ),
+          ],
         ),
       ),
       anchor: Anchor.center,
     );
     add(_label);
+    
+    // Make the main circle have a gradient-like appearance
+    paint = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          _baseColor.withOpacity(1.0),
+          _baseColor.withOpacity(0.8),
+        ],
+        stops: const [0.6, 1.0],
+      ).createShader(Rect.fromCircle(center: Offset.zero, radius: radius));
   }
 
   bool containsPoint(Vector2 point) {
-    // Increase hitbox slightly for better tap reliability
-    return point.distanceTo(position) <= radius * 1.3;
+    // Increase hitbox for better tap reliability
+    return point.distanceTo(position) <= radius * 1.4;
   }
 
   @override
